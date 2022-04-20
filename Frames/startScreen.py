@@ -6,20 +6,27 @@ class StartScreen:
 
     global vFrame
     def __init__(self,vFrame):
-        frame = ttk.Frame(vFrame.mainWindow, padding=10)
+        frame = ttk.Frame(vFrame.mainWindow)
 
-        a = Button(frame, text="StartGame", command= lambda: vFrame.openScreen("difficulty"))
-        a.pack(pady=20)
+        buttonFrame = ttk.Frame(frame)
 
-        b = Button(frame, text="Scoreboard", command= lambda: vFrame.openScreen("scoreboard"))
-        b.pack(pady=20)
+        bauerButton = Button(buttonFrame, text="Bauer", command= lambda: vFrame.openScreen("difficulty"))
+        bauerButton.grid(column=0,row=0,padx=5)
+
+        damenButton = Button(buttonFrame, text="Dame", command= lambda: vFrame.openScreen("difficulty"))
+        damenButton.grid(column=1,row=0,padx=5)
+
+        buttonFrame.grid(column=0,row=0,padx=5,pady=2.5)
+
+        scoreboardButton = Button(frame, text="Scoreboard", command= lambda: vFrame.openScreen("scoreboard"))
+        scoreboardButton.grid(column=0,row=1,padx=5,pady=2.5)
 
 
-        b = Button(frame, text="Settings", command= lambda: vFrame.openScreen("settings"))
-        b.pack(pady=20)
+        settingsButton = Button(frame, text="Settings", command= lambda: vFrame.openScreen("settings"))
+        settingsButton.grid(column=0,row=2,padx=5,pady=2.5)
 
-        c = Button(frame, text="Quit", command= vFrame.mainWindow.destroy)
-        c.pack(pady=20)
+        quitButton = Button(frame, text="Quit", command= vFrame.mainWindow.destroy)
+        quitButton.grid(column=0,row=3,padx=5,pady=2.5)
 
         vFrame.mainWindow.frm = frame
-        vFrame.mainWindow.frm.grid()
+        vFrame.mainWindow.frm.place(relx=0.5, rely=0.5, anchor=CENTER)

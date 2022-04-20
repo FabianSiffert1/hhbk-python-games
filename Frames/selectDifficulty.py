@@ -23,5 +23,5 @@ class SelectDifficulty:
         c.pack(pady=20)
 
         vFrame.mainWindow.frm = frame
-        vFrame.mainWindow.frm.grid()
+        vFrame.mainWindow.frm.place(relx=0.5, rely=0.5, anchor=CENTER)
 
