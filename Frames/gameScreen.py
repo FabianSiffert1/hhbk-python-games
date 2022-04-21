@@ -14,9 +14,9 @@ class GameScreen:
     player_colors = ["red", "blue"]
 
     board = [
-        [1,0,0,0,0,0],
         [0,0,0,0,0,0],
-        [0,0,0,2,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
         [0,0,0,0,0,0],
         [0,0,0,0,0,0],
         [0,0,0,0,0,0]
@@ -35,7 +35,7 @@ class GameScreen:
         [0,2,0,2,0,2],
         [2,0,2,0,2,0],
         [0,0,0,0,0,0],
-        [0,0,0,0,0,0],
+        [0,0,0,0,2,0],
         [0,1,0,1,0,1],
         [1,0,1,0,1,0]
         ]
@@ -67,7 +67,7 @@ class GameScreen:
                 xs = x * self.cellSize
                 ys = y * self.cellSize
                 if self.board[y][x] != 0:
-                    self.canvas.create_oval(xs, ys, xs + self.cellSize, ys + self.cellSize, fill=self.player_colors[self.board[y][x] - 1],width=0, tags="playerbutton")
+                    self.canvas.create_oval(xs, ys, xs + self.cellSize - 1, ys + self.cellSize - 1, fill=self.player_colors[self.board[y][x] - 1],width=0, tags="playerbutton")
                     self.canvas.tag_bind("playerbutton","<ButtonPress-1>", self.playerClicked)
 
                 x = x + 1
@@ -84,6 +84,7 @@ class GameScreen:
             self.selectedX = x
             self.selectedY = y
             self.highliteField()
+            self.markFieldMovable()
         else:
             self.selectedX = -1
             self.selectedY = -1
@@ -113,6 +114,39 @@ class GameScreen:
         ys = self.selectedY * self.cellSize
         self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, outline="red",width=2)
 
+    def markFieldMovable(self):
+        try:
+            xs = (self.selectedX - 1) * self.cellSize
+            ys = (self.selectedY - 1) * self.cellSize
+
+            if self.board[self.selectedY - 1][self.selectedX - 1] == 0:
+                self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+            else:
+                xs = (self.selectedX - 2) * self.cellSize
+                ys = (self.selectedY - 2) * self.cellSize
+                if self.board[self.selectedY - 2][self.selectedX - 2] == 0:
+                    self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                    self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+        except:
+            print("Out Of Range")
+
+        try:
+            xs = (self.selectedX + 1) * self.cellSize
+            ys = (self.selectedY - 1) * self.cellSize
+
+            if self.board[self.selectedY - 1][self.selectedX + 1] == 0:
+                self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+            else:
+                xs = (self.selectedX + 2) * self.cellSize
+                ys = (self.selectedY - 2) * self.cellSize
+                if self.board[self.selectedY - 2][self.selectedX + 2] == 0:
+                    self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                    self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+        except:
+            print("Out Of Range")
+
     def drawBoard(self):
         self.canvas = Canvas(self.frame, bg="white", height=self.cellSize*self.cellRows, width=self.cellSize*self.cellRows)
         self.canvas.config(highlightthickness=0)
@@ -124,8 +158,7 @@ class GameScreen:
                 xs = x * self.cellSize
                 ys = y * self.cellSize
 
-                self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, fill=self.colors[colorIndex], tags="fieldButton")
-                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+                self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, fill=self.colors[colorIndex],width=0)
 
                 colorIndex = colorIndex + 1
                 if colorIndex == 2:
@@ -140,3 +173,4 @@ class GameScreen:
             x = 0
             y = y + 1
         self.canvas.grid(column=0,row=1,pady=5)
+
