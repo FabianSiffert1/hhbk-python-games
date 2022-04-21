@@ -22,10 +22,32 @@ class GameScreen:
         [0,0,0,0,0,0]
         ]
 
+    startBauer = [
+        [2,2,2,2,2,2],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [1,1,1,1,1,1]
+        ]
+    
+    startDame = [
+        [0,2,0,2,0,2],
+        [2,0,2,0,2,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,1,0,1,0,1],
+        [1,0,1,0,1,0]
+        ]
+
     selectedX = -1
     selectedY = -1
 
     def __init__(self,vFrame):
+        if vFrame.game == "schach":
+            self.board = self.startBauer
+        if vFrame.game == "dame":
+            self.board = self.startDame
         self.frame = ttk.Frame(vFrame.mainWindow, padding=10)
 
         Button(self.frame, text="Exit", command= lambda: vFrame.openScreen("start")).grid(column=0,row=0,sticky=W,padx=0,pady=0)
@@ -34,6 +56,8 @@ class GameScreen:
         
         vFrame.mainWindow.frm = self.frame
         vFrame.mainWindow.frm.grid()
+
+        
 
     def drawPlayer(self):
         x = 0
@@ -63,7 +87,6 @@ class GameScreen:
         else:
             self.selectedX = -1
             self.selectedY = -1
-            """self.board[y][x] = 2"""
 
     def fieldClicked(self,clicked):
         x = int(clicked.x / self.cellSize)
@@ -117,5 +140,3 @@ class GameScreen:
             x = 0
             y = y + 1
         self.canvas.grid(column=0,row=1,pady=5)
-
-    
