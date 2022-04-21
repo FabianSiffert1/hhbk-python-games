@@ -4,9 +4,8 @@ from tkinter import ttk
 class ScoreBoardScreen:
     """Scoreboard Screen Content"""
 
-    global vFrame
     def __init__(self,vFrame):
-        frame = ttk.Frame(vFrame.mainWindow, padding=10)
+        frame = ttk.Frame(vFrame.mainWindow, padding=10, bg="#CEBB8C")
 
         a = Button(frame, text="Exit", command= lambda: vFrame.openScreen("start"))
         a.pack(pady=20)

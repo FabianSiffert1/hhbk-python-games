@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from Frames.gameScreen import GameScreen
+from Frames.game import Game
 from Frames.scoreboardScreen import ScoreBoardScreen
 from Frames.selectDifficulty import SelectDifficulty
 from Frames.startScreen import StartScreen
@@ -16,8 +16,9 @@ class VFrame:
     def __init__(self):
         self.mainWindow = Tk()
         self.mainWindow.title("Minimax Algorithm Python Games")
-        self.mainWindow.geometry("900x900")
-        self.mainWindow.resizable(True, True)
+        self.mainWindow.geometry("400x400")
+        self.mainWindow.resizable(False, False)
+        self.mainWindow.configure(background='#CEBB8C')
 
     """Clears Screen and Opens new Window"""
     def openScreen(self,text ,game = ""):
@@ -32,7 +33,7 @@ class VFrame:
         if text == "difficulty":
             SelectDifficulty(self)
         if text == "game":
-            GameScreen(self)
+            Game(self)
         if text == "scoreboard":
             ScoreBoardScreen(self)
         if text == "settings":
