@@ -43,7 +43,10 @@ class GameScreen:
     selectedX = -1
     selectedY = -1
 
+    global vFrame
+
     def __init__(self,vFrame):
+        self.vFrame = vFrame
         if vFrame.game == "schach":
             self.board = self.startBauer
         if vFrame.game == "dame":
@@ -84,7 +87,12 @@ class GameScreen:
             self.selectedX = x
             self.selectedY = y
             self.highliteField()
-            self.markFieldMovable()
+            if self.vFrame.game == "schach":
+                self.markFieldMovableSchach()
+            if self.vFrame.game == "dame":
+                self.markFieldMovableDame()
+            self.drawPlayer()
+            
         else:
             self.selectedX = -1
             self.selectedY = -1
@@ -104,6 +112,11 @@ class GameScreen:
         
         self.updateCanvas()
         self.highliteField()
+        if self.vFrame.game == "schach":
+            self.markFieldMovableSchach()
+        if self.vFrame.game == "dame":
+            self.markFieldMovableDame()
+        self.drawPlayer()
 
     def updateCanvas(self):
         self.drawBoard()
@@ -114,7 +127,7 @@ class GameScreen:
         ys = self.selectedY * self.cellSize
         self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, outline="red",width=2)
 
-    def markFieldMovable(self):
+    def markFieldMovableDame(self):
         try:
             xs = (self.selectedX - 1) * self.cellSize
             ys = (self.selectedY - 1) * self.cellSize
@@ -144,6 +157,37 @@ class GameScreen:
                 if self.board[self.selectedY - 2][self.selectedX + 2] == 0:
                     self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
                     self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+        except:
+            print("Out Of Range")
+
+    def markFieldMovableSchach(self):
+        try:
+            xs = (self.selectedX) * self.cellSize
+            ys = (self.selectedY - 1) * self.cellSize
+
+            if self.board[self.selectedY - 1][self.selectedX] == 0:
+                self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+        except:
+            print("Out Of Range")
+
+        try:
+            xs = (self.selectedX - 1) * self.cellSize
+            ys = (self.selectedY - 1) * self.cellSize
+
+            if self.board[self.selectedY - 1][self.selectedX - 1] != 0:
+                self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
+        except:
+            print("Out Of Range")
+
+        try:
+            xs = (self.selectedX + 1) * self.cellSize
+            ys = (self.selectedY - 1) * self.cellSize
+
+            if self.board[self.selectedY - 1][self.selectedX + 1] != 0:
+                self.canvas.create_rectangle(xs + 2, ys + 2, xs + self.cellSize - 2, ys + self.cellSize - 2, fill="yellow",width=0, tags="fieldButton")
+                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
         except:
             print("Out Of Range")
 
