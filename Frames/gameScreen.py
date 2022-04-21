@@ -41,19 +41,28 @@ class GameScreen:
                 ys = y * self.cellSize
                 if self.board[y][x] != 0:
                     self.canvas.create_oval(xs, ys, xs + self.cellSize, ys + self.cellSize, fill=self.player_colors[self.board[y][x] - 1],width=0, tags="playerbutton")
-                    self.canvas.tag_bind("playerbutton","<Button-1>", self.playerClicked)
+                    self.canvas.tag_bind("playerbutton","<ButtonPress-1>", self.playerClicked)
 
                 x = x + 1
             x = 0
             y = y + 1
 
-    def playerClicked(self):
-        self.board[3][3] = 2
+    def playerClicked(self,clicked):
+        x = int(clicked.x / self.cellSize)
+        y = int(clicked.y / self.cellSize)
+
+        self.board[y][x] = 2
         self.updateCanvas()
+        self.highliteField(x,y)
         
     def updateCanvas(self):
         self.drawBoard(self.frame)
         self.drawPlayer(self.frame)
+
+    def highliteField(self,x,y):
+        xs = x * self.cellSize
+        ys = y * self.cellSize
+        self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, outline="red",width=1)
 
     def drawBoard(self,frame):
         self.canvas = Canvas(frame, bg="white", height=self.cellSize*self.cellRows, width=self.cellSize*self.cellRows)
