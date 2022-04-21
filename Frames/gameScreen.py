@@ -22,6 +22,9 @@ class GameScreen:
         [0,0,0,0,0,0]
         ]
 
+    selectedX = -1
+    selectedY = -1
+
     def __init__(self,vFrame):
         self.frame = ttk.Frame(vFrame.mainWindow, padding=10)
 
@@ -32,7 +35,7 @@ class GameScreen:
         vFrame.mainWindow.frm = self.frame
         vFrame.mainWindow.frm.grid()
 
-    def drawPlayer(self,frame):
+    def drawPlayer(self):
         x = 0
         y = 0
         while y < self.cellRows:
@@ -51,21 +54,44 @@ class GameScreen:
         x = int(clicked.x / self.cellSize)
         y = int(clicked.y / self.cellSize)
 
-        self.board[y][x] = 2
         self.updateCanvas()
-        self.highliteField(x,y)
+
+        if self.selectedX == -1 :
+            self.selectedX = x
+            self.selectedY = y
+            self.highliteField()
+        else:
+            self.selectedX = -1
+            self.selectedY = -1
+            """self.board[y][x] = 2"""
+
+    def fieldClicked(self,clicked):
+        x = int(clicked.x / self.cellSize)
+        y = int(clicked.y / self.cellSize)
+        playerType = self.board[self.selectedY][self.selectedX]
+        playerType2 = self.board[y][x]
+
+        if self.selectedX != -1:
+            if playerType2 == 0:
+                self.board[self.selectedY][self.selectedX] = 0
+                self.board[y][x] = playerType
+                self.selectedX = -1
+                self.selectedY = -1
         
+        self.updateCanvas()
+        self.highliteField()
+
     def updateCanvas(self):
-        self.drawBoard(self.frame)
-        self.drawPlayer(self.frame)
+        self.drawBoard()
+        self.drawPlayer()
 
-    def highliteField(self,x,y):
-        xs = x * self.cellSize
-        ys = y * self.cellSize
-        self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, outline="red",width=1)
+    def highliteField(self):
+        xs = self.selectedX * self.cellSize
+        ys = self.selectedY * self.cellSize
+        self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, outline="red",width=2)
 
-    def drawBoard(self,frame):
-        self.canvas = Canvas(frame, bg="white", height=self.cellSize*self.cellRows, width=self.cellSize*self.cellRows)
+    def drawBoard(self):
+        self.canvas = Canvas(self.frame, bg="white", height=self.cellSize*self.cellRows, width=self.cellSize*self.cellRows)
         self.canvas.config(highlightthickness=0)
         x = 0
         y = 0
@@ -75,7 +101,8 @@ class GameScreen:
                 xs = x * self.cellSize
                 ys = y * self.cellSize
 
-                self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, fill=self.colors[colorIndex])
+                self.canvas.create_rectangle(xs, ys, xs + self.cellSize, ys + self.cellSize, fill=self.colors[colorIndex], tags="fieldButton")
+                self.canvas.tag_bind("fieldButton","<ButtonPress-1>", self.fieldClicked)
 
                 colorIndex = colorIndex + 1
                 if colorIndex == 2:
