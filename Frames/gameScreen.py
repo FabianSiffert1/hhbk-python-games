@@ -78,6 +78,8 @@ class GameScreen:
             y = y + 1
 
     def playerClicked(self,clicked):
+        self.fieldClicked(clicked)
+        
         x = int(clicked.x / self.cellSize)
         y = int(clicked.y / self.cellSize)
 
@@ -104,7 +106,7 @@ class GameScreen:
         playerType2 = self.board[y][x]
 
         if self.selectedX != -1:
-            if playerType2 == 0:
+            if playerType2 != playerType:
                 self.board[self.selectedY][self.selectedX] = 0
                 self.board[y][x] = playerType
                 self.selectedX = -1

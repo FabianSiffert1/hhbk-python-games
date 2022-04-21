@@ -4,11 +4,9 @@ from tkinter import ttk
 class SelectDifficulty:
     """Select Difficulty Content"""
 
-    global vFrame 
-
     def __init__(self,vFrame):
 
-        frame = ttk.Frame(vFrame.mainWindow, padding=10)
+        frame = Frame(vFrame.mainWindow, bg="#CEBB8C")
 
         d = Button(frame, text="Exit", command= lambda: vFrame.openScreen("start"))
         d.pack(pady=20)

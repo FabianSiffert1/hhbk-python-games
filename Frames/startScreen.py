@@ -4,11 +4,10 @@ from tkinter import ttk
 class StartScreen:
     """Start Screen Content"""
 
-    global vFrame
     def __init__(self,vFrame):
-        frame = ttk.Frame(vFrame.mainWindow)
+        frame = Frame(vFrame.mainWindow, bg="#CEBB8C")
 
-        buttonFrame = ttk.Frame(frame)
+        buttonFrame = Frame(frame, bg="#CEBB8C")
 
         bauerButton = Button(buttonFrame, text="Bauer", command= lambda: vFrame.openScreen("difficulty",game="schach"))
         bauerButton.grid(column=0,row=0,padx=5)
