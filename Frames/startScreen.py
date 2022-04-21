@@ -10,10 +10,10 @@ class StartScreen:
 
         buttonFrame = ttk.Frame(frame)
 
-        bauerButton = Button(buttonFrame, text="Bauer", command= lambda: vFrame.openScreen("difficulty"))
+        bauerButton = Button(buttonFrame, text="Bauer", command= lambda: vFrame.openScreen("difficulty",game="schach"))
         bauerButton.grid(column=0,row=0,padx=5)
 
-        damenButton = Button(buttonFrame, text="Dame", command= lambda: vFrame.openScreen("difficulty"))
+        damenButton = Button(buttonFrame, text="Dame", command= lambda: vFrame.openScreen("difficulty",game="dame"))
         damenButton.grid(column=1,row=0,padx=5)
 
         buttonFrame.grid(column=0,row=0,padx=5,pady=2.5)
