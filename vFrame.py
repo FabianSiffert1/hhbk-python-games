@@ -17,7 +17,7 @@ class VFrame:
         self.mainWindow = Tk()
         self.mainWindow.title("Minimax Algorithm Python Games")
         self.mainWindow.geometry("400x400")
-        self.mainWindow.resizable(False, False)
+        self.mainWindow.resizable(True, True)
         self.mainWindow.configure(background='#CEBB8C')
 
     """Clears Screen and Opens new Window"""
