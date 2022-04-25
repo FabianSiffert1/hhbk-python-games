@@ -1,5 +1,8 @@
+from asyncio.windows_events import NULL
 from tkinter import *
 from tkinter import ttk
+
+from numpy import empty
 from Game.movements import Movements
 from Game.vector2 import Vector2
 
@@ -40,13 +43,14 @@ class Game:
     def startNewGame(self):
         self.selected = Vector2(-1, -1)
         self.playerPositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
+        
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
         if self.vFrame.game == "schach":
-            self.playerPositions = GameTable.schachPositions
+            self.playerPositions = GameTable().schachPositions
         if self.vFrame.game == "dame":
-            self.playerPositions = GameTable.damePositions
-
+            self.playerPositions = GameTable().damePositions
+        print(self.playerPositions)
         self.refreshScreen()
 
     def restart(self):
