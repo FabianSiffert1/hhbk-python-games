@@ -50,7 +50,6 @@ class Game:
             self.playerPositions = GameTable().schachPositions
         if self.vFrame.game == "dame":
             self.playerPositions = GameTable().damePositions
-        print(self.playerPositions)
         self.refreshScreen()
 
     def restart(self):
