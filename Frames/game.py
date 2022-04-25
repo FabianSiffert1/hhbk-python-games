@@ -1,8 +1,7 @@
-from asyncio.windows_events import NULL
+
 from tkinter import *
 from tkinter import ttk
 
-from numpy import empty
 from Game.movements import Movements
 from Game.vector2 import Vector2
 
