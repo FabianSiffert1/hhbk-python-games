@@ -56,19 +56,19 @@ class Movements:
         
         return moveable
 
-    def CheckersIterate (self,x,y,directionX,directionY,i,player,moveable,game,team,canJump = True,jumpedOverEnimy = False, jumpCounter = 0):
+    def CheckersIterate (self,x,y,directionX,directionY,i,player,moveable,game,team,canJump = True,jumpedOverEnemy = False, jumpCounter = 0):
         if x+(directionX*i) < 0:
             return moveable
         if player[y+(directionY*i)][x+(directionX*i)] != team:
             if player[y+(directionY*i)][x+(directionX*i)] == 0:
                 if canJump is True and jumpCounter < 1:
                     moveable[y+(directionY*i)][x+(directionX*i)] = 1
-                    if jumpedOverEnimy is True:
+                    if jumpedOverEnemy is True:
                         self.CheckersIterate(x,y,directionX,directionY,i + 1,player,moveable,game,team,True,False, jumpCounter+1)
                     else:
                         self.CheckersIterate(x,y,directionX,directionY,i + 1,player,moveable,game,team,False,False,0)
             else:
-                if jumpedOverEnimy is False and canJump == True:
+                if jumpedOverEnemy is False and canJump == True:
                     self.CheckersIterate(x,y,directionX,directionY,i + 1,player,moveable,game,team,True,True)
                 
         
