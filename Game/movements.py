@@ -44,23 +44,33 @@ class Movements:
             """"""
         try:
             directionX = 1
-            moveable = self.CheckersIterate(self,x,y,directionX,directionY,i,player,moveable,game,team)
+            moveable = self.CheckersIterate(x,y,directionX,directionY,i,player,moveable,game,team)
+
         except:
             """"""
         try:
             directionX = -1
-            moveable = self.CheckersIterate(self,x,y,directionX,directionY,i,player,moveable,game,team)
+            moveable = self.CheckersIterate(x,y,directionX,directionY,i,player,moveable,game,team)
         except:
             """"""
         
         return moveable
 
-    def CheckersIterate (self,x,y,directionX,directionY,i,player,moveable,game,team):
-
+    def CheckersIterate (self,x,y,directionX,directionY,i,player,moveable,game,team,canJump = True,jumpedOverEnimy = False, jumpCounter = 0):
+        if x+(directionX*i) < 0:
+            return moveable
         if player[y+(directionY*i)][x+(directionX*i)] != team:
             if player[y+(directionY*i)][x+(directionX*i)] == 0:
-                moveable[y+(directionY*i)][x+(directionX*i)] = 1
-
+                if canJump is True and jumpCounter < 1:
+                    moveable[y+(directionY*i)][x+(directionX*i)] = 1
+                    if jumpedOverEnimy is True:
+                        self.CheckersIterate(x,y,directionX,directionY,i + 1,player,moveable,game,team,True,False, jumpCounter+1)
+                    else:
+                        self.CheckersIterate(x,y,directionX,directionY,i + 1,player,moveable,game,team,False,False,0)
+            else:
+                if jumpedOverEnimy is False and canJump == True:
+                    self.CheckersIterate(x,y,directionX,directionY,i + 1,player,moveable,game,team,True,True)
+                
         
         return moveable
 
