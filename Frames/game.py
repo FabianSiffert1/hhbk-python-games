@@ -76,9 +76,9 @@ class Game:
             self.playerPositions[self.selected.y][self.selected.x] = 0
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
-            self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self)
-            self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self)
-            print(self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self))
+            print("team1: " + str( self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self.cellCount)))
+            print("team2: " + str(  self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self.cellCount)))
+            #print(self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self))
            # print(self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self))
             
 

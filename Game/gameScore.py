@@ -9,24 +9,35 @@ class GameScore:
             0, 0
         ]
 
-    def evaluateScore(self, playerPositions , team, game):
-        scoreResult = 0
-        teamGamePieces = 0
-        direction = (team - 1) * 2 - 1
-        for x in range(game.cellCount):
-            for y in range(game.cellCount):
-                if playerPositions[x][y] == team:
-                    teamGamePieces += 1
+    def evaluateScore(self, figurePositions , team, cellCount):
 
-        for x in range(game.cellCount):
-            for y in range(game.cellCount):
-                if playerPositions[x][y] == team:
-                    if direction != 1:
-                        print('directionfoo')
-                        scoreResult += x
-                        print(scoreResult)
+
+        x = 0
+        y = 0
+        figureCount = 0
+        scoreReturn = 0
+        result = [0,0,0,0,0,0]
+        while x < cellCount:
+            while y < cellCount:
+                if figurePositions[y][x] == team:
+                    figureCount += 1
+                y +=1
+            y = 0
+            x+=1
+        
+        x = 0
+        y = 0
+        while x < cellCount:
+            while y < cellCount:
+                if figurePositions[y][x] == team:
+                    if team == 1:
+                        result[x] = cellCount - y - 1
+                        scoreReturn += result[x] * result[x] / figureCount
                     else:
-                        scoreResult += x
-            return scoreResult
+                        result[x] = y 
+                        scoreReturn += result[x] * result[x] / figureCount
+                y +=1
+            y = 0
+            x+=1
 
-
+        return scoreReturn
