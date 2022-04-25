@@ -1,18 +1,19 @@
-
 from tkinter import *
-from tkinter import ttk
 
 from Game.movements import Movements
 from Game.vector2 import Vector2
 
 from Game.displayBoard import DisplayBoard
 from Game.gameTable import GameTable
+from Game.gameScore import GameScore
 
 class Game:
     """Game Screen Content"""
 
     cellSize = 50
     cellCount = 6
+    playerOneTeam = 1
+    playerTwoTeam = 2
 
 
     global display
@@ -21,6 +22,7 @@ class Game:
     global playerPositions
     global movableHighlights
     global selected
+    global currentScore
 
     def __init__(self,vFrame):
         self.vFrame = vFrame
@@ -29,7 +31,8 @@ class Game:
         buttonFrame = Frame(self.frame, bg="#CEBB8C")
 
         Button(buttonFrame, text="Exit", command= lambda: vFrame.openScreen("start")).grid(column=0,row=0,sticky=W,padx=0,pady=0)
-        Button(buttonFrame, text="RestartGame", command= lambda: self.restart()).grid(column=1,row=0,sticky=W,padx=0,pady=0)
+        Button(buttonFrame, text="Restart Game", command= lambda: self.restart()).grid(column=1,row=0,sticky=W,padx=0,pady=0)
+        Button(buttonFrame, text="Change Score", command=lambda: self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self)).grid(column=2, row=0, sticky=W, padx=0, pady=0)
 
         buttonFrame.grid(column=0,row=0,sticky=W,padx=0,pady=0)
 
@@ -46,10 +49,10 @@ class Game:
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
         if self.vFrame.game == "schach":
-            self.playerPositions = GameTable().schachPositions
+            self.playerPositions = GameTable().chessPositions
         if self.vFrame.game == "dame":
-            self.playerPositions = GameTable().damePositions
-        self.refreshScreen()
+            self.playerPositions = GameTable().checkersPositions
+        self.currentScore = GameScore()
 
     def restart(self):
         self.startNewGame()
@@ -72,11 +75,16 @@ class Game:
             self.playerPositions[y1][x1] = self.playerPositions[self.selected.y][self.selected.x]
             self.playerPositions[self.selected.y][self.selected.x] = 0
             self.selected = Vector2(-1,-1)
-            self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
+            self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
+            self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self)
+            self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self)
+            print(self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self))
+           # print(self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self))
             
 
     def selectFigure(self,x,y):
-        if self.playerPositions[y][x] == 1:
+        #1  Blauer Punkt, 2 Roter Punkt, 0 Nichts / Auswahl, welche Farbe Spieler kontrolliert
+        if self.playerPositions[y][x] == self.playerOneTeam or self.playerPositions[y][x] == self.playerTwoTeam:
             self.selected = Vector2(x,y)
             self.movableHighlights = self.getMovableFields(x,y)
         
@@ -88,5 +96,4 @@ class Game:
             self.movable = Movements().getMovableFieldsPawn(x1,y1,self.playerPositions,movable,self)
         if self.vFrame.game == "dame":
             self.movable = Movements().getMovableFieldsCheckers(x1,y1,self.playerPositions,movable,self)
-
         return movable

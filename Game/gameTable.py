@@ -1,23 +1,20 @@
-from tkinter import *
-from tkinter import ttk
-
 class GameTable:
     """Game Screen Content"""
 
-    global schachPositions
-    global damePositions
+    global chessPositions
+    global checkersPositions
     playerColors = ["blue","red"]
     def __init__(self):
-        self.schachPositions = [
+        self.chessPositions = [
                 [2,2,2,2,2,2],
                 [0,0,0,0,0,0],
                 [0,0,0,0,0,0],
                 [0,0,0,0,0,0],
-                [0,0,2,0,0,0],
+                [0,0,0,0,0,0],
                 [1,1,1,1,1,1]
             ]
 
-        self.damePositions = [
+        self.checkersPositions = [
                 [0,0,0,0,0,2],
                 [2,0,2,0,2,0],
                 [0,0,2,0,0,0],
