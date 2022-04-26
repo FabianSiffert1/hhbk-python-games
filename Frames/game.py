@@ -88,33 +88,24 @@ class Game:
             self.figurePositions[self.selected.y][self.selected.x] = 0
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
-            #print("team1: " + str( self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self.cellCount)))
-            #print("team2: " + str(  self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self.cellCount)))
             self.changeActivePlayer()
             if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
                 currentAITeam = self.getAITeam()
-                #LOGIK: GET all movable pieces
                 teamPieces = self.getAllTeamPieces(self.figurePositions, currentAITeam)
-                #select random movable piece
+                #TODO: BUGFIX! Sometimes a piece that can not move is selected which crashes the AI
                 randomPiece = random.choice(teamPieces)
-                
-                #get movable fields
                 movableFields = self.convertMovableField(self.getMovableFields(randomPiece.x, randomPiece.y))
+                for field in movableFields:
+                    print('x:' + str(field.x) + ' y:' + str(field.y))
                 randomMove = random.choice(movableFields)
-                print(randomMove.x, randomMove.y)
+                #print(randomMove.x, randomMove.y)
                 self.moveAiFigure(randomPiece.x,randomPiece.y,randomMove.x,randomMove.y)
-                # move piece to movable field
-                #self.figurePositions[y1][x1] = self.figurePositions[1][1]
-                #self.figurePositions[randomPiece.y][randomPiece.x] = 0
-                # set old position to 0 (remove old piece)
-                #self.movable = self.getMovableFields(0,0)
-                #print(self.movable)
-                #figurePositionsAI = ArtificialIntelligence().takeTurn(self.figurePositions)
-                #print("moving piece")
-                #self.figurePositions[figurePositionsAI[0]][figurePositionsAI[1]] = currentAITeam
                 self.changeActivePlayer()
                 print("End of AI Turn")
                 self.refreshScreen()
+            #TODO: Print Current Score Funktion auslagern
+            print("team1: " + str( self.currentScore.evaluateScore(self.figurePositions, self.playerOneTeam, self.cellCount)))
+            print("team2: " + str(  self.currentScore.evaluateScore(self.figurePositions, self.playerTwoTeam, self.cellCount)))
 
             #TODO: IMPLEMENT PLAYER 2 CONTROLS
             #if self.playerOneTurn == False and self.artificialIntelligenceEnabled == False:
