@@ -36,7 +36,6 @@ class Game:
 
         Button(buttonFrame, text="Exit", command= lambda: vFrame.openScreen("start")).grid(column=0,row=0,sticky=W,padx=0,pady=0)
         Button(buttonFrame, text="Restart Game", command= lambda: self.restart()).grid(column=1,row=0,sticky=W,padx=0,pady=0)
-        Button(buttonFrame, text="Change Turn", command=lambda: self.changeActivePlayer()).grid(column=2, row=0, sticky=W, padx=0, pady=0)
 
         buttonFrame.grid(column=0,row=0,sticky=W,padx=0,pady=0)
 
@@ -79,6 +78,10 @@ class Game:
         self.moveFigure(x,y)
         self.refreshScreen()
 
+    def moveAiFigure(self,x1,y1,x2,y2):
+            self.figurePositions[y2][x2] = self.figurePositions[y1][x1]
+            self.figurePositions[y1][x1] = 0
+
     def moveFigure(self,x1,y1):
         if self.movableHighlights[y1][x1] == 1:
             self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
@@ -94,10 +97,12 @@ class Game:
                 teamPieces = self.getAllTeamPieces(self.figurePositions, currentAITeam)
                 #select random movable piece
                 randomPiece = random.choice(teamPieces)
-                print(randomPiece.x, randomPiece.y)
+                
                 #get movable fields
-                movableFields= self.convertMovableField(self.getMovableFields(randomPiece.x, randomPiece.y))
+                movableFields = self.convertMovableField(self.getMovableFields(randomPiece.x, randomPiece.y))
                 randomMove = random.choice(movableFields)
+                print(randomMove.x, randomMove.y)
+                self.moveAiFigure(randomPiece.x,randomPiece.y,randomMove.x,randomMove.y)
                 # move piece to movable field
                 #self.figurePositions[y1][x1] = self.figurePositions[1][1]
                 #self.figurePositions[randomPiece.y][randomPiece.x] = 0
@@ -115,6 +120,7 @@ class Game:
             #if self.playerOneTurn == False and self.artificialIntelligenceEnabled == False:
                 #PlayerTwo Turn
                 #Implement Turn Indicator
+                
 
     def changeActivePlayer(self):
         self.playerOneTurn = not self.playerOneTurn
