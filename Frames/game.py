@@ -6,6 +6,7 @@ from Game.vector2 import Vector2
 from Game.displayBoard import DisplayBoard
 from Game.gameTable import GameTable
 from Game.gameScore import GameScore
+from Game.artificialIntelligence import ArtificialIntelligence
 
 class Game:
     """Game Screen Content"""
@@ -23,6 +24,9 @@ class Game:
     global movableHighlights
     global selected
     global currentScore
+    global currentTurn
+    global playerOneTurn
+    global artificialIntelligenceEnabled
 
     def __init__(self,vFrame):
         self.vFrame = vFrame
@@ -32,7 +36,7 @@ class Game:
 
         Button(buttonFrame, text="Exit", command= lambda: vFrame.openScreen("start")).grid(column=0,row=0,sticky=W,padx=0,pady=0)
         Button(buttonFrame, text="Restart Game", command= lambda: self.restart()).grid(column=1,row=0,sticky=W,padx=0,pady=0)
-        Button(buttonFrame, text="Change Score", command=lambda: self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self)).grid(column=2, row=0, sticky=W, padx=0, pady=0)
+        Button(buttonFrame, text="Change Turn", command=lambda: self.changeActivePlayer()).grid(column=2, row=0, sticky=W, padx=0, pady=0)
 
         buttonFrame.grid(column=0,row=0,sticky=W,padx=0,pady=0)
 
@@ -54,6 +58,9 @@ class Game:
             self.playerPositions = GameTable().checkersPositions
             self.refreshScreen()
         self.currentScore = GameScore()
+        self.playerOneTurn = True
+        #TODO: SETTINGS AI SWITCH
+        self.artificialIntelligenceEnabled = True
 
     def restart(self):
         self.startNewGame()
@@ -77,13 +84,22 @@ class Game:
             self.playerPositions[self.selected.y][self.selected.x] = 0
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
-            print("team1: " + str( self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self.cellCount)))
-            print("team2: " + str(  self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self.cellCount)))
+            #print("team1: " + str( self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self.cellCount)))
+            #print("team2: " + str(  self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self.cellCount)))
+            self.changeActivePlayer()
+            if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
+                ArtificialIntelligence().takeTurn()
+                self.changeActivePlayer()
+                print("End of AI Turn")
+            #TODO: IMPLEMENT PLAYER 2 CONTROLS
+            #if self.playerOneTurn == False and self.artificialIntelligenceEnabled == False:
             
+    def changeActivePlayer(self):
+        self.playerOneTurn = not self.playerOneTurn
 
     def selectFigure(self,x,y):
         #1  Blauer Punkt, 2 Roter Punkt, 0 Nichts / Auswahl, welche Farbe Spieler kontrolliert
-        if self.playerPositions[y][x] == self.playerOneTeam:
+        if self.playerPositions[y][x] == self.playerOneTeam and self.playerOneTurn == True:
             self.selected = Vector2(x,y)
             self.movableHighlights = self.getMovableFields(x,y)
         
