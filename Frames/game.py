@@ -92,15 +92,15 @@ class Game:
                 currentAITeam = self.getAITeam()
                 #LOGIK: GET all movable pieces
                 teamPieces = self.getAllTeamPieces(self.figurePositions, currentAITeam)
-                # select random movable piece
+                #select random movable piece
                 randomPiece = random.choice(teamPieces)
                 print(randomPiece.x, randomPiece.y)
-                # get movable fields
-                self.getMovableFields(randomPiece.x, randomPiece.y)
-                #print(self.getMovableFields(randomPiece.x, randomPiece.y))
+                #get movable fields
+                movableFields= self.convertMovableField(self.getMovableFields(randomPiece.x, randomPiece.y))
+                randomMove = random.choice(movableFields)
                 # move piece to movable field
-                self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
-                self.figurePositions[randomPiece.y][randomPiece.x] = 0
+                #self.figurePositions[y1][x1] = self.figurePositions[1][1]
+                #self.figurePositions[randomPiece.y][randomPiece.x] = 0
                 # set old position to 0 (remove old piece)
                 #self.movable = self.getMovableFields(0,0)
                 #print(self.movable)
@@ -151,3 +151,16 @@ class Game:
         if self.vFrame.game == "dame":
             self.movable = Movements().getMovableFieldsCheckers(x1, y1, self.figurePositions, movable, self)
         return movable
+
+    def convertMovableField(self, movableFields):
+        x = 0
+        y = 0
+        movableFieldsCoordinates = []
+        while x < self.cellCount:
+            while y < self.cellCount:
+                if movableFields[y][x] == 1:
+                   movableFieldsCoordinates.append(Vector2(x,y))
+                y += 1
+            y = 0
+            x += 1
+        return movableFieldsCoordinates
