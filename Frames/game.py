@@ -44,14 +44,15 @@ class Game:
 
     def startNewGame(self):
         self.selected = Vector2(-1, -1)
-        self.playerPositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
-        
+        self.playerPositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
         if self.vFrame.game == "schach":
             self.playerPositions = GameTable().chessPositions
+            self.refreshScreen()
         if self.vFrame.game == "dame":
             self.playerPositions = GameTable().checkersPositions
+            self.refreshScreen()
         self.currentScore = GameScore()
 
     def restart(self):
@@ -78,13 +79,11 @@ class Game:
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
             print("team1: " + str( self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self.cellCount)))
             print("team2: " + str(  self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self.cellCount)))
-            #print(self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self))
-           # print(self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self))
             
 
     def selectFigure(self,x,y):
         #1  Blauer Punkt, 2 Roter Punkt, 0 Nichts / Auswahl, welche Farbe Spieler kontrolliert
-        if self.playerPositions[y][x] == self.playerOneTeam or self.playerPositions[y][x] == self.playerTwoTeam:
+        if self.playerPositions[y][x] == self.playerOneTeam:
             self.selected = Vector2(x,y)
             self.movableHighlights = self.getMovableFields(x,y)
         
