@@ -8,7 +8,7 @@ from Game.gameTable import GameTable
 class Movements:
     """Functions for movement"""
 
-    def getMovableFieldsPawn(self,x,y,player,moveable,game):
+    def getMovableFieldsChess(self, x, y, player, moveable, game):
         try:
             team = player[y][x]
             direction = (team - 1) * 2 - 1

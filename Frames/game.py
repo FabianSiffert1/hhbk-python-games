@@ -1,3 +1,4 @@
+import random
 from tkinter import *
 
 from Game.movements import Movements
@@ -90,14 +91,22 @@ class Game:
             if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
                 currentAITeam = self.getAITeam()
                 #LOGIK: GET all movable pieces
+                teamPieces = self.getAllTeamPieces(self.figurePositions, currentAITeam)
                 # select random movable piece
-                # get movable field
+                randomPiece = random.choice(teamPieces)
+                print(randomPiece.x, randomPiece.y)
+                # get movable fields
+                self.getMovableFields(randomPiece.x, randomPiece.y)
+                #print(self.getMovableFields(randomPiece.x, randomPiece.y))
                 # move piece to movable field
+                self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
+                self.figurePositions[randomPiece.y][randomPiece.x] = 0
                 # set old position to 0 (remove old piece)
-                #self.getMovableFields()
-                figurePositionsAI = ArtificialIntelligence().takeTurn(self.figurePositions)
-                print("moving piece")
-                self.figurePositions[figurePositionsAI[0]][figurePositionsAI[1]] = currentAITeam
+                #self.movable = self.getMovableFields(0,0)
+                #print(self.movable)
+                #figurePositionsAI = ArtificialIntelligence().takeTurn(self.figurePositions)
+                #print("moving piece")
+                #self.figurePositions[figurePositionsAI[0]][figurePositionsAI[1]] = currentAITeam
                 self.changeActivePlayer()
                 print("End of AI Turn")
                 self.refreshScreen()
@@ -119,13 +128,26 @@ class Game:
         if self.figurePositions[y][x] == self.playerOneTeam and self.playerOneTurn == True:
             self.selected = Vector2(x,y)
             self.movableHighlights = self.getMovableFields(x,y)
+
         
+    def getAllTeamPieces (self, figurePositions, team):
+        x = 0
+        y = 0
+        teamPieces = []
+        while x < self.cellCount:
+            while y < self.cellCount:
+                if figurePositions[y][x] == team:
+                    teamPieces.append(Vector2(x,y))
+                y += 1
+            y = 0
+            x += 1
+        return teamPieces
 
     def getMovableFields(self,x1,y1):
         movable = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
         if self.vFrame.game == "schach":
-            self.movable = Movements().getMovableFieldsPawn(x1, y1, self.figurePositions, movable, self)
+            self.movable = Movements().getMovableFieldsChess(x1, y1, self.figurePositions, movable, self)
         if self.vFrame.game == "dame":
             self.movable = Movements().getMovableFieldsCheckers(x1, y1, self.figurePositions, movable, self)
         return movable
