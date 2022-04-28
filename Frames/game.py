@@ -46,7 +46,7 @@ class Game:
         vFrame.mainWindow.frm = self.frame
         vFrame.mainWindow.frm.grid()
 
-        vFrame.database.insertScoreboard(1234142134,vFrame.database.username)
+        vFrame.database.insertScoreboard("TestUser", 123, 0)
 
     def startNewGame(self):
         self.selected = Vector2(-1, -1)

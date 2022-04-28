@@ -37,5 +37,7 @@ class Database:
         else:
             loginScreen.error["text"] = "ERROR: Entry denied"
 
-    def insertScoreboard(self,score,username):
+    def insertScoreboard(self, usernameEntry, scoreEntry, gameEntry):
         """Insert Score to Scoreboard"""
+        c.execute("INSERT INTO scoreboard ( username, score, game ) VALUES (?, ?, ?)", (usernameEntry, scoreEntry, gameEntry, ))
+        db.commit()
