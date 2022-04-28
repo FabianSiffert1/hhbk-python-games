@@ -1,5 +1,6 @@
 from tkinter import *
 import sqlite3
+from types import NoneType
 
 db = sqlite3.connect("Scoreboard.db")
 c = db.cursor()
@@ -12,8 +13,10 @@ class loginScreen:
     global registerButton
     global loginButton
     global error
+    global vFrame
 
     def __init__(self, vFrame):
+        self.vFrame = vFrame
         frame = Frame(vFrame.mainWindow, bg="#CEBB8C")
 
         self.error = Message(frame, text="", width=180)
@@ -69,11 +72,13 @@ class loginScreen:
         # result = c.execute("SELECT COUNT(*) from users WHERE username =' + newusername + '")
         c.execute("SELECT username, password  FROM users WHERE username = ?", (newUsername,))
         result = c.fetchone()
-        print(result[1])
-        print(result[0])
-
-        if result[0] == newUsername and str(result[1]) == str(newPassword):
+        #print(result[1])
+        #print(result[0])
+        if type(result) == NoneType:
+            self.error["text"] = "ERROR: Entry denied"
+        elif result[0] == newUsername and str(result[1]) == str(newPassword):
             self.error["text"] = "Entry granted"
+            self.vFrame.username = newUsername
             # Hier mus dann die Weiterleitung auf die Seite hin      <---
         else:
             self.error["text"] = "ERROR: Entry denied"

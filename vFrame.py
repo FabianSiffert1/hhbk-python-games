@@ -13,6 +13,7 @@ class VFrame:
     """Initialize Screen"""
     global mainWindow
     global game
+    global username
 
     def __init__(self):
         self.mainWindow = Tk()
