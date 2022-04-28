@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
-class SettingsScreen:
+class settingsScreen:
     """Settings Screen Content"""
 
     def __init__(self,vFrame):

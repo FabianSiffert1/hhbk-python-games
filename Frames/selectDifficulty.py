@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
-class SelectDifficulty:
+class selectDifficulty:
     """Select Difficulty Content"""
 
     def __init__(self,vFrame):
