@@ -9,6 +9,9 @@ class StartScreen:
 
         buttonFrame = Frame(frame, bg="#CEBB8C")
 
+        loginButton = Button(frame, text="Login", command= lambda: vFrame.scoreboardContent())
+        loginButton.grid(column=0,row=4,padx=5,pady=2.5)
+
         bauerButton = Button(buttonFrame, text="Bauer", command= lambda: vFrame.openScreen("difficulty",game="schach"))
         bauerButton.grid(column=0,row=0,padx=5)
 
