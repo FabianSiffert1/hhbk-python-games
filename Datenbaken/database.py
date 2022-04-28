@@ -22,7 +22,7 @@ class Database:
 
 
     def loginUser(self,loginScreen, newUsername, newPassword):
-        print(newUsername, newPassword)
+        #print(newUsername, newPassword)
         # result = c.execute("SELECT COUNT(*) from users WHERE username =' + newusername + '")
         c.execute("SELECT username, password  FROM users WHERE username = ?", (newUsername,))
         result = c.fetchone()
