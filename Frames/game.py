@@ -1,3 +1,4 @@
+import random
 from tkinter import *
 
 from Game.movements import Movements
@@ -6,6 +7,7 @@ from Game.vector2 import Vector2
 from Game.displayBoard import DisplayBoard
 from Game.gameTable import GameTable
 from Game.gameScore import GameScore
+from Game.artificialIntelligence import ArtificialIntelligence
 
 class Game:
     """Game Screen Content"""
@@ -19,10 +21,12 @@ class Game:
     global display
     global vFrame
     global frame
-    global playerPositions
+    global figurePositions
     global movableHighlights
     global selected
     global currentScore
+    global playerOneTurn
+    global artificialIntelligenceEnabled
 
     def __init__(self,vFrame):
         self.vFrame = vFrame
@@ -32,7 +36,6 @@ class Game:
 
         Button(buttonFrame, text="Exit", command= lambda: vFrame.openScreen("start")).grid(column=0,row=0,sticky=W,padx=0,pady=0)
         Button(buttonFrame, text="Restart Game", command= lambda: self.restart()).grid(column=1,row=0,sticky=W,padx=0,pady=0)
-        Button(buttonFrame, text="Change Score", command=lambda: self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self)).grid(column=2, row=0, sticky=W, padx=0, pady=0)
 
         buttonFrame.grid(column=0,row=0,sticky=W,padx=0,pady=0)
 
@@ -44,15 +47,20 @@ class Game:
 
     def startNewGame(self):
         self.selected = Vector2(-1, -1)
-        self.playerPositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
-        
+        self.figurePositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
         if self.vFrame.game == "schach":
-            self.playerPositions = GameTable().chessPositions
+            self.figurePositions = GameTable().chessPositions
+            self.refreshScreen()
         if self.vFrame.game == "dame":
-            self.playerPositions = GameTable().checkersPositions
+            self.figurePositions = GameTable().checkersPositions
+            self.refreshScreen()
         self.currentScore = GameScore()
+        #TODO: IMPLEMENT CHOOSING STARTING SITE ie. PlayerOne or PlayerTwo
+        self.playerOneTurn = True
+        #TODO: SETTINGS AI SWITCH
+        self.artificialIntelligenceEnabled = True
 
     def restart(self):
         self.startNewGame()
@@ -61,7 +69,7 @@ class Game:
         
     def refreshScreen(self):
         self.display.clear()
-        self.display.updatePlayers(self.playerPositions)
+        self.display.updatePlayers(self.figurePositions)
         self.display.updateMovableHighlights(self.movableHighlights)
         self.display.highlite(self.selected.x,self.selected.y)
 
@@ -70,30 +78,86 @@ class Game:
         self.moveFigure(x,y)
         self.refreshScreen()
 
+    def moveAiFigure(self,x1,y1,x2,y2):
+            self.figurePositions[y2][x2] = self.figurePositions[y1][x1]
+            self.figurePositions[y1][x1] = 0
+
     def moveFigure(self,x1,y1):
         if self.movableHighlights[y1][x1] == 1:
-            self.playerPositions[y1][x1] = self.playerPositions[self.selected.y][self.selected.x]
-            self.playerPositions[self.selected.y][self.selected.x] = 0
+            self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
+            self.figurePositions[self.selected.y][self.selected.x] = 0
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
-            print("team1: " + str( self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self.cellCount)))
-            print("team2: " + str(  self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self.cellCount)))
-            #print(self.currentScore.evaluateScore(self.playerPositions, self.playerOneTeam, self))
-           # print(self.currentScore.evaluateScore(self.playerPositions, self.playerTwoTeam, self))
-            
+            self.changeActivePlayer()
+            if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
+                currentAITeam = self.getAITeam()
+                teamPieces = self.getAllTeamPieces(self.figurePositions, currentAITeam)
+                #TODO: BUGFIX! Sometimes a piece that can not move is selected which crashes the AI
+                randomPiece = random.choice(teamPieces)
+                movableFields = self.convertMovableField(self.getMovableFields(randomPiece.x, randomPiece.y))
+                for field in movableFields:
+                    print('x:' + str(field.x) + ' y:' + str(field.y))
+                randomMove = random.choice(movableFields)
+                #print(randomMove.x, randomMove.y)
+                self.moveAiFigure(randomPiece.x,randomPiece.y,randomMove.x,randomMove.y)
+                self.changeActivePlayer()
+                print("End of AI Turn")
+                self.refreshScreen()
+            #TODO: Print Current Score Funktion auslagern
+            print("team1: " + str( self.currentScore.evaluateScore(self.figurePositions, self.playerOneTeam, self.cellCount)))
+            print("team2: " + str(  self.currentScore.evaluateScore(self.figurePositions, self.playerTwoTeam, self.cellCount)))
+
+            #TODO: IMPLEMENT PLAYER 2 CONTROLS
+            #if self.playerOneTurn == False and self.artificialIntelligenceEnabled == False:
+                #PlayerTwo Turn
+                #Implement Turn Indicator
+                
+
+    def changeActivePlayer(self):
+        self.playerOneTurn = not self.playerOneTurn
+
+    #TODO: IMPLEMENT AI Team Switch
+    def getAITeam(self):
+        return self.playerTwoTeam
 
     def selectFigure(self,x,y):
         #1  Blauer Punkt, 2 Roter Punkt, 0 Nichts / Auswahl, welche Farbe Spieler kontrolliert
-        if self.playerPositions[y][x] == self.playerOneTeam or self.playerPositions[y][x] == self.playerTwoTeam:
+        if self.figurePositions[y][x] == self.playerOneTeam and self.playerOneTurn == True:
             self.selected = Vector2(x,y)
             self.movableHighlights = self.getMovableFields(x,y)
+
         
+    def getAllTeamPieces (self, figurePositions, team):
+        x = 0
+        y = 0
+        teamPieces = []
+        while x < self.cellCount:
+            while y < self.cellCount:
+                if figurePositions[y][x] == team:
+                    teamPieces.append(Vector2(x,y))
+                y += 1
+            y = 0
+            x += 1
+        return teamPieces
 
     def getMovableFields(self,x1,y1):
         movable = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
         if self.vFrame.game == "schach":
-            self.movable = Movements().getMovableFieldsPawn(x1,y1,self.playerPositions,movable,self)
+            self.movable = Movements().getMovableFieldsChess(x1, y1, self.figurePositions, movable, self)
         if self.vFrame.game == "dame":
-            self.movable = Movements().getMovableFieldsCheckers(x1,y1,self.playerPositions,movable,self)
+            self.movable = Movements().getMovableFieldsCheckers(x1, y1, self.figurePositions, movable, self)
         return movable
+
+    def convertMovableField(self, movableFields):
+        x = 0
+        y = 0
+        movableFieldsCoordinates = []
+        while x < self.cellCount:
+            while y < self.cellCount:
+                if movableFields[y][x] == 1:
+                   movableFieldsCoordinates.append(Vector2(x,y))
+                y += 1
+            y = 0
+            x += 1
+        return movableFieldsCoordinates
