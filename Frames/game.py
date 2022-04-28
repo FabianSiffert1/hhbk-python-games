@@ -46,7 +46,7 @@ class Game:
         vFrame.mainWindow.frm = self.frame
         vFrame.mainWindow.frm.grid()
 
-        vFrame.database.insertScoreboard("TestUser", 123, 0)
+        #vFrame.database.insertScoreboard("TestUser", 123, 0)
 
     def startNewGame(self):
         self.selected = Vector2(-1, -1)
@@ -117,7 +117,7 @@ class Game:
                 tempPositions = self.moveAiFigure(tempPositions,aifigure.x,aifigure.y,field.x,field.y)
 
                 tempPlayerScore = GameScore().evaluateScore(tempPositions,1,self.cellCount)
-                print("playerScore"+ str(tempPlayerScore))
+                #print("playerScore"+ str(tempPlayerScore))
                 if playerScore > tempPlayerScore:
                     move1 = field
                     figureResult1 = aifigure
@@ -132,27 +132,44 @@ class Game:
                 print("shiot")
             else:
                 self.moveAiFigure(self.figurePositions,figureResult2.x,figureResult2.y,move2.x,move2.y)
+                if self.vFrame.game == "dame":
+                    self.killJumpedEnemies(figureResult2.x, figureResult2.y, move2.x, move2.y)
         else:
             self.moveAiFigure(self.figurePositions,figureResult1.x,figureResult1.y,move1.x,move1.y)
+            if self.vFrame.game == "dame":
+                self.killJumpedEnemies(figureResult1.x, figureResult1.y, move1.x, move1.y)
+
+    def killJumpedEnemies(self,oldPositionX, oldPositionY, newPositionX, newPositionY):
+        if (abs(oldPositionX - newPositionX) > 1 or abs(oldPositionY - newPositionY) > 1):
+            xPositionToKill = max(oldPositionX,newPositionX) - 1
+            yPositionToKill = max(oldPositionY, newPositionY) - 1
+            self.figurePositions[yPositionToKill][xPositionToKill] = 0
+            #print("Killing: ["+ str(xPositionToKill+1) + "] [" + str(yPositionToKill+1) + "]")
+
+
+
 
     def moveFigure(self,x1,y1):
         if self.movableHighlights[y1][x1] == 1:
             self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
             self.figurePositions[self.selected.y][self.selected.x] = 0
+            if self.vFrame.game == "dame":
+                self.killJumpedEnemies(x1,y1,self.selected.x, self.selected.y)
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
             self.changeActivePlayer()
+            self.refreshScreen()
             if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
                 currentAITeam = self.getAITeam()
                 self.miniMax1D()
                 #print(randomMove.x, randomMove.y)
                 
                 self.changeActivePlayer()
-                print("End of AI Turn")
+                #print("End of AI Turn")
                 self.refreshScreen()
             #TODO: Print Current Score Funktion auslagern
-            print("team1: " + str( self.currentScore.evaluateScore(self.figurePositions, self.playerOneTeam, self.cellCount)))
-            print("team2: " + str(  self.currentScore.evaluateScore(self.figurePositions, self.playerTwoTeam, self.cellCount)))
+            #print("team1: " + str( self.currentScore.evaluateScore(self.figurePositions, self.playerOneTeam, self.cellCount)))
+            #print("team2: " + str(  self.currentScore.evaluateScore(self.figurePositions, self.playerTwoTeam, self.cellCount)))
 
             #TODO: IMPLEMENT PLAYER 2 CONTROLS
             #if self.playerOneTurn == False and self.artificialIntelligenceEnabled == False:
