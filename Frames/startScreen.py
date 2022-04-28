@@ -1,10 +1,36 @@
 from tkinter import *
 from tkinter import ttk
+import sqlite3
 
 class StartScreen:
     """Start Screen Content"""
 
+    def createDatabase(self):
+        db = sqlite3.connect("Scoreboard.db")
+        c = db.cursor()
+
+
+
+        c.execute(""" CREATE TABLE IF NOT EXISTS scoreboard (
+            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT    NOT NULL,
+            score    INTEGER,
+            game    INTEGER 
+        ); 
+        
+        """)
+
+
+        c.execute("""CREATE TABLE If Not Exists users (
+            id       INTEGER PRIMARY KEY NOT NULL ,
+            username TEXT NOT NULL,
+            password INTEGER NOT NULL
+        );
+
+        """)
+
     def __init__(self,vFrame):
+        self.createDatabase()
         frame = Frame(vFrame.mainWindow, bg="#CEBB8C")
 
         buttonFrame = Frame(frame, bg="#CEBB8C")
