@@ -46,6 +46,8 @@ class Game:
         vFrame.mainWindow.frm = self.frame
         vFrame.mainWindow.frm.grid()
 
+        vFrame.database.insertScoreboard(1234142134,vFrame.database.username)
+
     def startNewGame(self):
         self.selected = Vector2(-1, -1)
         self.figurePositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]

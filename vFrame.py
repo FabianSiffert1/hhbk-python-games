@@ -17,6 +17,7 @@ class VFrame:
     global database
 
     def __init__(self):
+        self.username = ""
         self.mainWindow = Tk()
         self.mainWindow.title("Minimax Algorithm Python Games")
         self.mainWindow.geometry("400x400")
