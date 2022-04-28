@@ -1,10 +1,11 @@
 from tkinter import *
 from tkinter import ttk
 from Frames.game import Game
-from Frames.scoreboardScreen import ScoreBoardScreen
-from Frames.selectDifficulty import SelectDifficulty
-from Frames.startScreen import StartScreen
-from Frames.settingsScreen import SettingsScreen
+from Frames.scoreboardScreen import scoreBoardScreen
+from Frames.selectDifficulty import selectDifficulty
+from Frames.startScreen import startScreen
+from Frames.settingsScreen import settingsScreen
+from Frames.loginScreen import loginScreen
 
 class VFrame:
     """Window Mangament Class"""
@@ -29,12 +30,14 @@ class VFrame:
             self.mainWindow.frm.destroy()
 
         if text == "start":
-            StartScreen(self)
+            startScreen(self)
         if text == "difficulty":
-            SelectDifficulty(self)
+            selectDifficulty(self)
         if text == "game":
             Game(self)
         if text == "scoreboard":
-            ScoreBoardScreen(self)
+            scoreBoardScreen(self)
         if text == "settings":
-            SettingsScreen(self)
+            settingsScreen(self)
+        if text == "login":
+            loginScreen(self)

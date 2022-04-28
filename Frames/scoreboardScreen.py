@@ -3,7 +3,7 @@ from tkinter import ttk
 import tkinter
 import sqlite3
 
-class ScoreBoardScreen:
+class scoreBoardScreen:
     """Scoreboard Screen Content"""
 
     def __init__(self,vFrame):
