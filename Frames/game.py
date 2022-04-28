@@ -1,6 +1,7 @@
 import random
+import time
 from tkinter import *
-
+from copy import deepcopy
 from Game.movements import Movements
 from Game.vector2 import Vector2
 
@@ -78,9 +79,59 @@ class Game:
         self.moveFigure(x,y)
         self.refreshScreen()
 
-    def moveAiFigure(self,x1,y1,x2,y2):
-            self.figurePositions[y2][x2] = self.figurePositions[y1][x1]
-            self.figurePositions[y1][x1] = 0
+    def checkWin(self):
+        x = 0
+        y = 0
+        while x < self.cellCount:
+            while y < self.cellCount:
+                if y == 0:
+                    if figurePositions[y][x] == 2:
+                        teamPieces.append(Vector2(x,y))
+                y += 1
+            y = 0
+            x += 1
+        return teamPieces
+
+    def moveAiFigure(self,figurePositions,x1,y1,x2,y2):
+        figurePositions[y2][x2] = figurePositions[y1][x1]
+        figurePositions[y1][x1] = 0
+        return figurePositions
+
+    def miniMax1D(self):
+        aiFigures = self.getAllTeamPieces(self.figurePositions, 2)
+        #TODO: BUGFIX! Sometimes a piece that can not move is selected which crashes the AI
+        playerScore = GameScore().evaluateScore(self.figurePositions,1,self.cellCount)
+        move1 = Vector2(-1,-1)
+        figureResult1 = Vector2(-1,-1)
+        
+        aiScore = GameScore().evaluateScore(self.figurePositions,2,self.cellCount)
+        move2 = Vector2(-1,-1)
+        figureResult2 = Vector2(-1,-1)
+        
+        for aifigure in aiFigures:
+            movableFields = self.convertMovableField(self.getMovableFields(aifigure.x, aifigure.y))
+            for field in movableFields:
+                tempPositions = deepcopy(self.figurePositions)
+                tempPositions = self.moveAiFigure(tempPositions,aifigure.x,aifigure.y,field.x,field.y)
+
+                tempPlayerScore = GameScore().evaluateScore(tempPositions,1,self.cellCount)
+                print("playerScore"+ str(tempPlayerScore))
+                if playerScore > tempPlayerScore:
+                    move1 = field
+                    figureResult1 = aifigure
+                
+                tempAiScore = GameScore().evaluateScore(tempPositions,2,self.cellCount)
+                if aiScore < tempAiScore:
+                    move2 = field
+                    figureResult2 = aifigure
+        #randomMove = random.choice(movableFields)
+        if move1.x == -1:
+            if move2.x == -1:
+                print("shiot")
+            else:
+                self.moveAiFigure(self.figurePositions,figureResult2.x,figureResult2.y,move2.x,move2.y)
+        else:
+            self.moveAiFigure(self.figurePositions,figureResult1.x,figureResult1.y,move1.x,move1.y)
 
     def moveFigure(self,x1,y1):
         if self.movableHighlights[y1][x1] == 1:
@@ -91,15 +142,9 @@ class Game:
             self.changeActivePlayer()
             if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
                 currentAITeam = self.getAITeam()
-                teamPieces = self.getAllTeamPieces(self.figurePositions, currentAITeam)
-                #TODO: BUGFIX! Sometimes a piece that can not move is selected which crashes the AI
-                randomPiece = random.choice(teamPieces)
-                movableFields = self.convertMovableField(self.getMovableFields(randomPiece.x, randomPiece.y))
-                for field in movableFields:
-                    print('x:' + str(field.x) + ' y:' + str(field.y))
-                randomMove = random.choice(movableFields)
+                self.miniMax1D()
                 #print(randomMove.x, randomMove.y)
-                self.moveAiFigure(randomPiece.x,randomPiece.y,randomMove.x,randomMove.y)
+                
                 self.changeActivePlayer()
                 print("End of AI Turn")
                 self.refreshScreen()
