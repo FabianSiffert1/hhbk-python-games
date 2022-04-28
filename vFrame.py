@@ -14,6 +14,7 @@ class VFrame:
     global mainWindow
     global game
     global username
+    global database
 
     def __init__(self):
         self.mainWindow = Tk()
