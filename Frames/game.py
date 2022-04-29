@@ -57,6 +57,7 @@ class Game:
         self.selected = Vector2(-1, -1)
         self.killCounterTeamOne = 0
         self.killCounterTeamTwo = 0
+        self.winningTeam = None
         self.figurePositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
