@@ -79,17 +79,16 @@ class Game:
 
         
     def refreshScreen(self):
-        self.display.clear()
-        self.display.updatePlayers(self.figurePositions)
-        self.display.updateMovableHighlights(self.movableHighlights)
-        self.display.highlite(self.selected.x,self.selected.y)
+        if self.gameOver == False:
+            self.display.clear()
+            self.display.updatePlayers(self.figurePositions)
+            self.display.updateMovableHighlights(self.movableHighlights)
+            self.display.highlite(self.selected.x,self.selected.y)
 
     def fieldClicked(self,x,y):
         self.selectFigure(x,y)
         self.moveFigure(x,y)
-        self.checkWin()
-        if self.gameOver is False:
-            self.refreshScreen()
+        self.refreshScreen()
 
     def checkWin(self):
         x = 0
@@ -108,13 +107,15 @@ class Game:
                 y += 1
             y = 0
             x += 1
-        if self.killCounterTeamOne > 5:
+        if self.getAmountOfPossibleMoves(self.figurePositions, self.getPlayerOneTeam()) == 0:
+            print("PlayerOne ran out of moves")
+            self.gameOver = True
+        if self.killCounterTeamOne == self.cellCount:
             self.winningTeam = self.getPlayerOneTeam()
             self.gameOver = True
-        elif self.killCounterTeamTwo > 5:
+        elif self.killCounterTeamTwo == self.cellCount:
             self.winningTeam = self.getAITeam()
             self.gameOver = True
-
         if self.gameOver == True:
             self.openGameEndScreen(self.winningTeam)
 
@@ -136,6 +137,7 @@ class Game:
 
     def miniMax1D(self):
         #TODO: IMPLEMENT SCHLAGZWANG!
+        #TODO: CHECKERS IMPLEMENT COMBO MOVEMENT
         aiFigures = self.getAllTeamPieces(self.figurePositions, 2)
         #TODO: BUGFIX! Sometimes a piece that can not move is selected which crashes the AI
         playerScore = GameScore().evaluateScore(self.figurePositions,1,self.cellCount)
@@ -165,7 +167,7 @@ class Game:
         #randomMove = random.choice(movableFields)
         if move1.x == -1:
             if move2.x == -1:
-                print("AI CANT MOVE - Player Wins")
+                #print("AI CANT MOVE - Player Wins")
                 time.sleep(2)
                 self.gameOver = True
                 self.openGameEndScreen(self.getPlayerOneTeam())
@@ -210,6 +212,7 @@ class Game:
                 self.killJumpedEnemies(x1,y1,self.selected.x, self.selected.y, self.getPlayerOneTeam())
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
+            self.checkWin()
             self.changeActivePlayer()
             self.refreshScreen()
             if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
@@ -217,6 +220,7 @@ class Game:
                 self.miniMax1D()
                 #print(randomMove.x, randomMove.y)
                 if self.gameOver is False:
+                    self.checkWin()
                     self.changeActivePlayer()
                     self.refreshScreen()
             #TODO: Print Current Score Funktion auslagern
@@ -230,6 +234,8 @@ class Game:
 
     def changeActivePlayer(self):
         self.playerOneTurn = not self.playerOneTurn
+
+
 
     #TODO: Implement player controlled Team Switch
     def getPlayerOneTeam(self):
@@ -260,6 +266,13 @@ class Game:
             y = 0
             x += 1
         return teamPieces
+
+    def getAmountOfPossibleMoves (self, figurePositions, team):
+        teamPiecePositions = self.getAllTeamPieces(figurePositions, team)
+        amountOfPossibleMoves = 0
+        for piece in teamPiecePositions:
+            amountOfPossibleMoves += sum(map(sum, self.getMovableFields(piece.x,piece.y)))
+        #print(amountOfPossibleMoves)
 
     def getMovableFields(self,x1,y1):
         movable = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
