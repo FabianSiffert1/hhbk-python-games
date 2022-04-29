@@ -166,6 +166,7 @@ class Game:
         if move1.x == -1:
             if move2.x == -1:
                 print("AI CANT MOVE - Player Wins")
+                time.sleep(2)
                 self.gameOver = True
                 self.openGameEndScreen(self.getPlayerOneTeam())
 
@@ -212,13 +213,12 @@ class Game:
             self.changeActivePlayer()
             self.refreshScreen()
             if self.playerOneTurn == False and self.artificialIntelligenceEnabled == True:
-                currentAITeam = self.getAITeam()
+                #currentAITeam = self.getAITeam()
                 self.miniMax1D()
                 #print(randomMove.x, randomMove.y)
-                
-                self.changeActivePlayer()
-                #print("End of AI Turn")
-                self.refreshScreen()
+                if self.gameOver is False:
+                    self.changeActivePlayer()
+                    self.refreshScreen()
             #TODO: Print Current Score Funktion auslagern
             #print("team1: " + str( self.currentScore.evaluateScore(self.figurePositions, self.playerOneTeam, self.cellCount)))
             #print("team2: " + str(  self.currentScore.evaluateScore(self.figurePositions, self.playerTwoTeam, self.cellCount)))
