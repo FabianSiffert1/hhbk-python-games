@@ -53,8 +53,8 @@ class Game:
         #vFrame.database.insertScoreboard("TestUser", 123, 0)
 
     def startNewGame(self):
-        self.gameOver = False
         self.selected = Vector2(-1, -1)
+        self.gameOver = False
         self.killCounterTeamOne = 0
         self.killCounterTeamTwo = 0
         self.winningTeam = None
@@ -116,14 +116,18 @@ class Game:
             self.gameOver = True
 
         if self.gameOver == True:
-            #TODO: calculate Score
-            #TODO: if logged in write score to leaderboard
-            if self.winningTeam == self.getPlayerOneTeam():
-                self.vFrame.winOrLossMessage = "You Won!"
-                self.vFrame.openScreen("gameEndScreen", self.vFrame.game)
-            else:
-                self.vFrame.winOrLossMessage = "You Lost :("
-                self.vFrame.openScreen("gameEndScreen", self.vFrame.game)
+            self.openGameEndScreen(self.winningTeam)
+
+
+    def openGameEndScreen(self, winningTeam):
+        # TODO: calculate Score
+        # TODO: if logged in write score to leaderboard
+        if winningTeam == self.getPlayerOneTeam():
+            self.vFrame.winOrLossMessage = "You Won!"
+            self.vFrame.openScreen("gameEndScreen", self.vFrame.game)
+        else:
+            self.vFrame.winOrLossMessage = "You Lost :("
+            self.vFrame.openScreen("gameEndScreen", self.vFrame.game)
 
     def moveAiFigure(self,figurePositions,x1,y1,x2,y2):
         figurePositions[y2][x2] = figurePositions[y1][x1]
@@ -131,6 +135,7 @@ class Game:
         return figurePositions
 
     def miniMax1D(self):
+        #TODO: IMPLEMENT SCHLAGZWANG!
         aiFigures = self.getAllTeamPieces(self.figurePositions, 2)
         #TODO: BUGFIX! Sometimes a piece that can not move is selected which crashes the AI
         playerScore = GameScore().evaluateScore(self.figurePositions,1,self.cellCount)
@@ -160,8 +165,10 @@ class Game:
         #randomMove = random.choice(movableFields)
         if move1.x == -1:
             if move2.x == -1:
-                print("shiot")
-                #AI movable count = 0
+                print("AI CANT MOVE - Player Wins")
+                self.gameOver = True
+                self.openGameEndScreen(self.getPlayerOneTeam())
+
             else:
                 self.evaluateKillCounter(move2.x,  move2.y, self.getAITeam())
                 self.moveAiFigure(self.figurePositions,figureResult2.x,figureResult2.y,move2.x,move2.y)
