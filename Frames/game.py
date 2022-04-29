@@ -30,6 +30,8 @@ class Game:
     global artificialIntelligenceEnabled
     global gameOver
     global winningTeam
+    global killCounterTeamOne
+    global killCounterTeamTwo
 
     def __init__(self,vFrame):
         self.vFrame = vFrame
@@ -53,6 +55,8 @@ class Game:
     def startNewGame(self):
         self.gameOver = False
         self.selected = Vector2(-1, -1)
+        self.killCounterTeamOne = 0
+        self.killCounterTeamTwo = 0
         self.figurePositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
 
@@ -103,6 +107,13 @@ class Game:
                 y += 1
             y = 0
             x += 1
+        if self.killCounterTeamOne > 5:
+            self.winningTeam = self.getPlayerOneTeam()
+            self.gameOver = True
+        elif self.killCounterTeamTwo > 5:
+            self.winningTeam = self.getAITeam()
+            self.gameOver = True
+
         if self.gameOver == True:
             #TODO: calculate Score
             #TODO: if logged in write score to leaderboard
@@ -149,14 +160,19 @@ class Game:
         if move1.x == -1:
             if move2.x == -1:
                 print("shiot")
+                #AI movable count = 0
             else:
+                self.evaluateKillCounter(move2.x,  move2.y, self.getAITeam())
                 self.moveAiFigure(self.figurePositions,figureResult2.x,figureResult2.y,move2.x,move2.y)
                 if self.vFrame.game == "dame":
                     self.killJumpedEnemies(figureResult2.x, figureResult2.y, move2.x, move2.y)
+
         else:
+            self.evaluateKillCounter(move1.x,  move1.y, self.getAITeam())
             self.moveAiFigure(self.figurePositions,figureResult1.x,figureResult1.y,move1.x,move1.y)
             if self.vFrame.game == "dame":
                 self.killJumpedEnemies(figureResult1.x, figureResult1.y, move1.x, move1.y)
+
 
     def killJumpedEnemies(self,oldPositionX, oldPositionY, newPositionX, newPositionY):
         if (abs(oldPositionX - newPositionX) > 1 or abs(oldPositionY - newPositionY) > 1):
@@ -164,9 +180,19 @@ class Game:
             yPositionToKill = max(oldPositionY, newPositionY) - 1
             self.figurePositions[yPositionToKill][xPositionToKill] = 0
             #print("Killing: ["+ str(xPositionToKill+1) + "] [" + str(yPositionToKill+1) + "]")
+            #TODO: KILLED ENEMY -> CHECK IF ENEMY has pieces left. if not -> loss for enemy
+
+
+    def evaluateKillCounter(self, x1, y1, currentTeam):
+        if self.figurePositions[y1][x1] !=0 and self.playerOneTurn == True:
+            self.killCounterTeamOne += 1
+        elif self.figurePositions[y1][x1] !=0:
+            self.killCounterTeamTwo += 1
+
 
     def moveFigure(self,x1,y1):
         if self.movableHighlights[y1][x1] == 1:
+            self.evaluateKillCounter(x1, y1, self.playerOneTurn)
             self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
             self.figurePositions[self.selected.y][self.selected.x] = 0
             if self.vFrame.game == "dame":
@@ -191,7 +217,6 @@ class Game:
             #if self.playerOneTurn == False and self.artificialIntelligenceEnabled == False:
                 #PlayerTwo Turn
                 #Implement Turn Indicator
-                
 
     def changeActivePlayer(self):
         self.playerOneTurn = not self.playerOneTurn
@@ -199,6 +224,8 @@ class Game:
     #TODO: Implement player controlled Team Switch
     def getPlayerOneTeam(self):
         return self.playerOneTeam
+
+    #TODO: Implement getCurrentTeam
 
     #TODO: IMPLEMENT AI Team Switch
     def getAITeam(self):
