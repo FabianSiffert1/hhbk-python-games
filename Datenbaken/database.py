@@ -22,7 +22,7 @@ class Database:
 
 
     def loginUser(self,loginScreen, newUsername, newPassword):
-        print(newUsername, newPassword)
+        #print(newUsername, newPassword)
         # result = c.execute("SELECT COUNT(*) from users WHERE username =' + newusername + '")
         c.execute("SELECT username, password  FROM users WHERE username = ?", (newUsername,))
         result = c.fetchone()
@@ -37,5 +37,7 @@ class Database:
         else:
             loginScreen.error["text"] = "ERROR: Entry denied"
 
-    def insertScoreboard(self,score,username):
+    def insertScoreboard(self, usernameEntry, scoreEntry, gameEntry):
         """Insert Score to Scoreboard"""
+        c.execute("INSERT INTO scoreboard ( username, score, game ) VALUES (?, ?, ?)", (usernameEntry, scoreEntry, gameEntry, ))
+        db.commit()
