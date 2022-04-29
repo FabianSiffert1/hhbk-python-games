@@ -166,22 +166,24 @@ class Game:
                 self.evaluateKillCounter(move2.x,  move2.y, self.getAITeam())
                 self.moveAiFigure(self.figurePositions,figureResult2.x,figureResult2.y,move2.x,move2.y)
                 if self.vFrame.game == "dame":
-                    self.killJumpedEnemies(figureResult2.x, figureResult2.y, move2.x, move2.y)
+                    self.killJumpedEnemies(figureResult2.x, figureResult2.y, move2.x, move2.y, self.getAITeam())
 
         else:
             self.evaluateKillCounter(move1.x,  move1.y, self.getAITeam())
             self.moveAiFigure(self.figurePositions,figureResult1.x,figureResult1.y,move1.x,move1.y)
             if self.vFrame.game == "dame":
-                self.killJumpedEnemies(figureResult1.x, figureResult1.y, move1.x, move1.y)
+                self.killJumpedEnemies(figureResult1.x, figureResult1.y, move1.x, move1.y, self.getAITeam())
 
 
-    def killJumpedEnemies(self,oldPositionX, oldPositionY, newPositionX, newPositionY):
+    def killJumpedEnemies(self,oldPositionX, oldPositionY, newPositionX, newPositionY, currentTeam):
         if (abs(oldPositionX - newPositionX) > 1 or abs(oldPositionY - newPositionY) > 1):
             xPositionToKill = max(oldPositionX,newPositionX) - 1
             yPositionToKill = max(oldPositionY, newPositionY) - 1
             self.figurePositions[yPositionToKill][xPositionToKill] = 0
-            #print("Killing: ["+ str(xPositionToKill+1) + "] [" + str(yPositionToKill+1) + "]")
-            #TODO: KILLED ENEMY -> CHECK IF ENEMY has pieces left. if not -> loss for enemy
+            if currentTeam == self.getPlayerOneTeam():
+                self.killCounterTeamOne += 1
+            elif currentTeam == self.getAITeam():
+                self.killCounterTeamTwo += 1
 
 
     def evaluateKillCounter(self, x1, y1, currentTeam):
@@ -197,7 +199,7 @@ class Game:
             self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
             self.figurePositions[self.selected.y][self.selected.x] = 0
             if self.vFrame.game == "dame":
-                self.killJumpedEnemies(x1,y1,self.selected.x, self.selected.y)
+                self.killJumpedEnemies(x1,y1,self.selected.x, self.selected.y, self.getPlayerOneTeam())
             self.selected = Vector2(-1,-1)
             self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
             self.changeActivePlayer()
