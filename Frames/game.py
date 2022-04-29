@@ -28,6 +28,8 @@ class Game:
     global currentScore
     global playerOneTurn
     global artificialIntelligenceEnabled
+    global gameOver
+    global winningTeam
 
     def __init__(self,vFrame):
         self.vFrame = vFrame
@@ -49,6 +51,7 @@ class Game:
         #vFrame.database.insertScoreboard("TestUser", 123, 0)
 
     def startNewGame(self):
+        self.gameOver = False
         self.selected = Vector2(-1, -1)
         self.figurePositions = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)]
         self.movableHighlights = [[0 for x in range(self.cellCount)] for y in range(self.cellCount)] 
@@ -79,7 +82,9 @@ class Game:
     def fieldClicked(self,x,y):
         self.selectFigure(x,y)
         self.moveFigure(x,y)
-        self.refreshScreen()
+        self.checkWin()
+        if self.gameOver is False:
+            self.refreshScreen()
 
     def checkWin(self):
         x = 0
@@ -87,12 +92,26 @@ class Game:
         while x < self.cellCount:
             while y < self.cellCount:
                 if y == 0:
-                    if figurePositions[y][x] == 2:
-                        teamPieces.append(Vector2(x,y))
+                    if self.figurePositions[y][x] == 1:
+                        self.gameOver = True
+                        self.winningTeam = 1
+
+                if y == 5:
+                    if self.figurePositions[y][x] == 2:
+                        self.gameOver = True
+                        self.winningTeam = 2
                 y += 1
             y = 0
             x += 1
-        return teamPieces
+        if self.gameOver == True:
+            #TODO: calculate Score
+            #TODO: if logged in write score to leaderboard
+            if self.winningTeam == self.getPlayerOneTeam():
+                self.vFrame.winOrLossMessage = "You Won!"
+                self.vFrame.openScreen("gameEndScreen", self.vFrame.game)
+            else:
+                self.vFrame.winOrLossMessage = "You Lost :("
+                self.vFrame.openScreen("gameEndScreen", self.vFrame.game)
 
     def moveAiFigure(self,figurePositions,x1,y1,x2,y2):
         figurePositions[y2][x2] = figurePositions[y1][x1]
@@ -146,9 +165,6 @@ class Game:
             self.figurePositions[yPositionToKill][xPositionToKill] = 0
             #print("Killing: ["+ str(xPositionToKill+1) + "] [" + str(yPositionToKill+1) + "]")
 
-
-
-
     def moveFigure(self,x1,y1):
         if self.movableHighlights[y1][x1] == 1:
             self.figurePositions[y1][x1] = self.figurePositions[self.selected.y][self.selected.x]
@@ -179,6 +195,10 @@ class Game:
 
     def changeActivePlayer(self):
         self.playerOneTurn = not self.playerOneTurn
+
+    #TODO: Implement player controlled Team Switch
+    def getPlayerOneTeam(self):
+        return self.playerOneTeam
 
     #TODO: IMPLEMENT AI Team Switch
     def getAITeam(self):

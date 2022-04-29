@@ -6,6 +6,7 @@ from Frames.selectDifficulty import selectDifficulty
 from Frames.startScreen import startScreen
 from Frames.settingsScreen import settingsScreen
 from Frames.loginScreen import loginScreen
+from Frames.gameEndScreen import GameEndScreen
 
 class VFrame:
     """Window Mangament Class"""
@@ -15,9 +16,11 @@ class VFrame:
     global game
     global username
     global database
+    global winOrLossMessage
 
     def __init__(self):
         self.username = ""
+        self.winOrLossMessage = "TEMP"
         self.mainWindow = Tk()
         self.mainWindow.title("Minimax Algorithm Python Games")
         self.mainWindow.geometry("400x400")
@@ -44,3 +47,5 @@ class VFrame:
             settingsScreen(self)
         if text == "login":
             loginScreen(self)
+        if text == "gameEndScreen":
+            GameEndScreen(self,game)
