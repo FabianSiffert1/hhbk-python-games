@@ -108,8 +108,9 @@ class Game:
             y = 0
             x += 1
         if self.getAmountOfPossibleMoves(self.figurePositions, self.getPlayerOneTeam()) == 0:
-            print("PlayerOne ran out of moves")
+            #print("PlayerOne ran out of moves")
             self.gameOver = True
+            self.winningTeam = self.getAITeam()
         if self.killCounterTeamOne == self.cellCount:
             self.winningTeam = self.getPlayerOneTeam()
             self.gameOver = True
