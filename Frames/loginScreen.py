@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from tkinter import *
 import sqlite3
 
-from Datenbaken.database import Database
+from Database.database import Database
 
 db = sqlite3.connect("Scoreboard.db")
 c = db.cursor()
